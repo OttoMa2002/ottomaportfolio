@@ -1,55 +1,36 @@
 # Otto's Personal Portfolio Website
 
 ## Overview
-This is an ongoing personal website/portfolio project. There is no fixed scope — features and content will be added incrementally over time.
+个人网站/作品集，持续迭代中，无固定范围。
 
 ## Tech Stack
-- **Framework:** React (JavaScript)
-- **Build Tool:** Vite
-- **Styling:** Tailwind CSS v4 (via `@tailwindcss/vite` plugin)
-- **Package Manager:** npm
-- **Icons:** Inline SVGs from iconbuddy.com (streamline-ultimate set)
+React (JS) + Vite + Tailwind CSS v4 + npm
 
 ## Project Structure
 ```
-ottomaportfolio/
-├── index.html            # Entry HTML (loads Google Fonts, favicon, title "Otto's Home")
-├── vite.config.js        # Vite config (React + Tailwind plugins)
-├── package.json
-├── .gitignore
-├── src/
-│   ├── main.jsx          # React entry point
-│   ├── App.jsx           # Root component (nav bar, footer, all page content)
-│   ├── App.css           # Component styles (currently empty)
-│   ├── index.css          # Tailwind entry + global bg color (#0a0a0a)
-│   └── assets/           # Static assets (images, SVGs, etc.)
-└── public/               # Static files (favicon 小小猪.png, SVG icons)
+src/
+├── main.jsx        # React 入口
+├── App.jsx         # 根组件（导航栏、页面内容、页脚）
+├── App.css         # 组件样式
+├── index.css       # Tailwind 入口 + 全局样式
+└── assets/         # 静态资源
+public/             # favicon、SVG 图标等
+index.html          # HTML 入口（Google Fonts、favicon）
+vite.config.js      # Vite 配置（React + Tailwind 插件）
 ```
 
 ## Current State
-- **Nav bar (top, fixed):** Left: "OTTO'S" in Fredoka font with gold glow effect. Center: "Welcome." in Quicksand font. Right: "Navigation" dropdown with About/Projects/Contact placeholders. Gold glow shadow on bottom edge. Semi-transparent dark background with blur.
-- **Footer (bottom, fixed):** Left: copyright "© 2026 Otto Ma". Right: 6 social icons (Instagram, GitHub, Bilibili, Email, WeChat, Phone) with hover scale+brighten effect.
-- **Background:** Dark theme with linear gradient (#0a0a0a → #1a1508 → #0d0b04) + two ambient gold glow orbs (top-right, bottom-left). html/body bg set to #0a0a0a to prevent white flash on overscroll.
-- **Placeholder content:** 6 lorem ipsum sections for scroll testing (to be replaced with real content).
-- Dev server runs on `http://localhost:5173/`
+- 固定导航栏（含多语言"欢迎"无限滚动横幅）+ 固定页脚已完成
+- 深色主题 + 金色点缀的整体风格已确定
+- 页面主体为占位内容，待替换
+- 尚未安装路由（react-router-dom）
 
 ## Commands
-- `npm run dev` — Start dev server
-- `npm run build` — Production build
-- `npm run preview` — Preview production build
+- `npm run dev` — 开发服务器 (localhost:5173)
+- `npm run build` — 生产构建
+- `npm run preview` — 预览生产构建
 
-## Design / Style Guide
-- **Fonts:** Fredoka (logo/brand), Quicksand (body/UI) — loaded via Google Fonts
-- **Color scheme:** Dark background with gold/yellow accents
-- **Text colors:** gray-300 for general text, hover to gray-200
-- **Icon source:** iconbuddy.com streamline-ultimate (bold, filled style)
-- **Favicon:** 小小猪.png
-
-## Next Steps
-- Replace placeholder sections with real page content
-- Install react-router-dom for page navigation (About, Projects, Contact)
-- Add actual links to social media icons
-- Define and build out individual pages
-
-## Deployment
-_(to be configured)_
+## Style Conventions
+- 字体：Fredoka（品牌）、Quicksand（正文）— Google Fonts
+- 配色：深色背景 + 金色/黄色点缀
+- 图标来源：iconbuddy.com streamline-ultimate

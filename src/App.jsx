@@ -33,12 +33,35 @@ function App() {
           OTTO'S
         </div>
 
-        {/* Center - Welcome */}
+        {/* Center - Welcome marquee */}
         <div
-          className="text-2xl font-semibold text-gray-300"
-          style={{ fontFamily: "'Quicksand', sans-serif" }}
+          className="flex-1 mx-12 overflow-hidden max-w-md"
+          style={{
+            maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
+            WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
+          }}
         >
-          Welcome.
+          <div
+            className="inline-flex whitespace-nowrap text-2xl font-semibold text-gray-300 animate-marquee"
+            style={{ fontFamily: "'Quicksand', sans-serif" }}
+          >
+            <span className="inline-flex gap-5 pr-5">Welcome</span>
+            <span className="inline-flex gap-5 pr-5">欢迎</span>
+            <span className="inline-flex gap-5 pr-5">歡迎</span>
+            <span className="inline-flex gap-5 pr-5">ようこそ</span>
+            <span className="inline-flex gap-5 pr-5">환영합니다</span>
+            <span className="inline-flex gap-5 pr-5">Bienvenue</span>
+            <span className="inline-flex gap-5 pr-5">Bienvenido</span>
+            <span className="inline-flex gap-5 pr-5">Bem-vindo</span>
+            <span className="inline-flex gap-5 pr-5">Welcome</span>
+            <span className="inline-flex gap-5 pr-5">欢迎</span>
+            <span className="inline-flex gap-5 pr-5">歡迎</span>
+            <span className="inline-flex gap-5 pr-5">ようこそ</span>
+            <span className="inline-flex gap-5 pr-5">환영합니다</span>
+            <span className="inline-flex gap-5 pr-5">Bienvenue</span>
+            <span className="inline-flex gap-5 pr-5">Bienvenido</span>
+            <span className="inline-flex gap-5 pr-5">Bem-vindo</span>
+          </div>
         </div>
 
         {/* Right - Navigation dropdown */}
