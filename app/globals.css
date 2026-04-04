@@ -12,3 +12,87 @@ html, body {
 .animate-marquee {
   animation: marquee 13s linear infinite;
 }
+
+/* OTTO'S base glow */
+.otto-glow {
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 25px rgba(255, 215, 0, 0.5), 0 0 50px rgba(255, 215, 0, 0.3);
+}
+
+/* OTTO'S flame effect — SVG filter on pseudo-element, text stays crisp */
+.flame-text {
+  position: relative;
+  z-index: 0;
+}
+
+.flame-text::before,
+.flame-text::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -10px;
+  pointer-events: none;
+  font: inherit;
+  z-index: -1;
+  transition: opacity 0.5s ease;
+}
+
+/* Bottom flame layer: golden-yellow */
+.flame-text::before {
+  color: transparent;
+  text-shadow:
+    0 -8px 8px rgba(255, 210, 0, 0.35),
+    0 -16px 16px rgba(255, 170, 0, 0.2),
+    0 -24px 24px rgba(255, 130, 0, 0.1);
+  filter: url(#flame-filter) blur(4px);
+  opacity: 0.5;
+}
+
+/* Top flame layer: bright yellow */
+.flame-text::after {
+  color: transparent;
+  top: -14px;
+  text-shadow:
+    0 -6px 6px rgba(255, 235, 60, 0.3),
+    0 -14px 14px rgba(255, 210, 0, 0.18),
+    0 -22px 20px rgba(255, 180, 0, 0.08);
+  filter: url(#flame-filter) blur(3px);
+  opacity: 0.4;
+}
+
+/* Navbar flowing light background */
+.nav-bg {
+  background: rgba(10, 10, 10, 0.8);
+}
+
+.nav-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 200px;
+  z-index: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 200, 0, 0.08) 0%,
+    rgba(255, 180, 0, 0.03) 40%,
+    transparent 70%
+  );
+  animation: nav-light-flow 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes nav-light-flow {
+  0% { left: -200px; }
+  50% { left: 100%; }
+  100% { left: -200px; }
+}
+
+/* Hide flames when scrolled */
+.flame-text.flame-off::before {
+  opacity: 0 !important;
+}
+.flame-text.flame-off::after {
+  opacity: 0 !important;
+}
