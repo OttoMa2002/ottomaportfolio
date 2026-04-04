@@ -4,7 +4,7 @@ import Footer from "./components/Footer"
 export default function Home() {
   return (
     <div
-      className="relative min-h-screen text-white overflow-hidden"
+      className="relative min-h-screen text-white overflow-x-hidden"
       style={{
         background:
           "linear-gradient(135deg, #0a0a0a 0%, #1a1508 50%, #0d0b04 100%)",
@@ -30,7 +30,7 @@ export default function Home() {
 
       {/* Placeholder content for scroll testing */}
       <div
-        className="pt-24 pb-20 px-10"
+        className="pt-32 md:pt-24 pb-20 px-10"
         style={{ fontFamily: "var(--font-quicksand)" }}
       >
         {[1, 2, 3, 4, 5, 6].map((i) => (
