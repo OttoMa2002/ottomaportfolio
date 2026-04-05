@@ -74,8 +74,8 @@ html, body {
   z-index: -1;
   background: radial-gradient(
     ellipse at center,
-    rgba(255, 200, 0, 0.08) 0%,
-    rgba(255, 180, 0, 0.03) 40%,
+    rgba(255, 200, 0, 0.22) 0%,
+    rgba(255, 180, 0, 0.10) 40%,
     transparent 70%
   );
   animation: nav-light-flow 6s ease-in-out infinite;

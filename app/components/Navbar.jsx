@@ -108,7 +108,7 @@ export default function Navbar() {
         </button>
 
         {menuOpen && (
-          <div className="absolute right-0 pt-2 w-40">
+          <div className="absolute right-0 pt-2 w-40 z-50">
           <div
             className="rounded-lg shadow-lg py-2"
             style={{
