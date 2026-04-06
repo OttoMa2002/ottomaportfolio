@@ -97,12 +97,12 @@ function ContactModal({ item, onClose }) {
   return createPortal(
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[100] flex items-center justify-center"
+      className="fixed inset-0 z-100 flex items-center justify-center"
       style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)" }}
       onClick={(e) => { if (e.target === overlayRef.current) onClose() }}
     >
       <div
-        className="relative rounded-2xl px-8 py-6 min-w-[240px] text-center"
+        className="relative rounded-2xl px-8 py-6 min-w-60 text-center"
         style={{
           background: "rgba(22, 22, 22, 0.98)",
           border: "1px solid rgba(255, 255, 255, 0.06)",

@@ -1,5 +1,6 @@
 import Navbar from "./components/Navbar"
 import Footer from "./components/Footer"
+import HeroSection from "./components/HeroSection"
 
 export default function Home() {
   return (
@@ -28,22 +29,15 @@ export default function Home() {
 
       <Navbar />
 
-      {/* Placeholder content for scroll testing */}
-      <div
-        className="pt-32 md:pt-24 pb-20 px-10"
-        style={{ fontFamily: "var(--font-quicksand)" }}
-      >
-        {[1, 2, 3, 4, 5, 6].map((i) => (
-          <div key={i} className="mb-16">
-            <h2 className="text-2xl font-bold text-gray-300 mb-4">
-              Section {i}
-            </h2>
-            <p className="text-gray-400 leading-relaxed">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-              ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-              aliquip ex ea commodo consequat.
-            </p>
+      <HeroSection />
+
+      {/* Placeholder sections for scroll testing */}
+      <div className="px-8 md:px-16 lg:px-24 pb-28" style={{ fontFamily: "var(--font-quicksand)" }}>
+        {[2, 3, 4].map((i) => (
+          <div key={i} className="mb-20 max-w-5xl mx-auto">
+            <h2 className="text-xl font-semibold text-gray-500 mb-3">Section {i}</h2>
+            <div className="h-px w-full mb-6" style={{ background: "rgba(255,255,255,0.06)" }} />
+            <p className="text-gray-600 leading-relaxed">占位内容，待替换。</p>
           </div>
         ))}
       </div>
