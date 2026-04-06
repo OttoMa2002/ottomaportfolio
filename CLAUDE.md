@@ -1,7 +1,8 @@
 # Otto's Personal Portfolio Website
 
 ## Overview
-个人网站/作品集，持续迭代中，无固定范围。计划加入登录系统和留言功能。
+个人作品集网站，持续迭代，无固定范围。后续计划加入登录系统和留言功能。
+开发分支：`normal_dev` → PR 合并到 `main`。
 
 ## Tech Stack
 React (JS) + Next.js (App Router) + Tailwind CSS v4 + npm
@@ -9,25 +10,31 @@ React (JS) + Next.js (App Router) + Tailwind CSS v4 + npm
 ## Project Structure
 ```
 app/
-├── layout.jsx           # 根布局（next/font、metadata）
-├── page.jsx             # 首页（服务端组件）
-├── globals.css          # Tailwind 入口 + 全局样式
+├── layout.jsx           # 根布局，字体加载（Fredoka / Quicksand / Noto Sans SC）
+├── page.jsx             # 首页，组装各 section 组件
+├── globals.css          # 全局样式（含大屏字体缩放 clamp）
 └── components/
-    ├── Navbar.jsx       # 导航栏（客户端组件，含多语言横幅）
-    └── Footer.jsx       # 页脚（社交图标）
-public/                  # favicon、SVG 图标等
-next.config.mjs          # Next.js 配置
-postcss.config.mjs       # PostCSS 配置（Tailwind）
+    ├── Navbar.jsx       # 固定顶部导航，滚动时自动缩小
+    ├── Footer.jsx       # 固定底部，版权 + SocialLinks
+    ├── SocialLinks.jsx  # 社交图标：链接类直接跳转，联系方式类弹 Modal
+    └── HeroSection.jsx  # 首页第一块主体内容（见下方说明）
+public/                  # favicon、SVG 图标、avatar.jpg
 ```
 
 ## Current State
-- 导航栏：滚动时自动缩小（隐藏走马灯，缩小字体），回到顶部时恢复大版本
-- 导航栏含 SVG 滤镜驱动的文字烟雾/火焰效果（仅大版本）、背景流动光圈
-- 点击 OTTO'S 平滑滚回页面顶部；下拉菜单鼠标移出自动关闭
-- 深色主题 + 金色点缀的整体风格已确定
-- 页面主体为占位内容，待替换
-- 已从 Vite 迁移至 Next.js（App Router），为后续登录/留言功能做准备
-- 字体通过 next/font 加载（CSS 变量：--font-fredoka, --font-quicksand）
+
+### 已完成
+- **Navbar**：固定顶部，滚动缩小/还原，含走马灯多语言欢迎词、火焰文字效果、流动光圈背景
+- **Footer + SocialLinks**：固定底部，Instagram/Bilibili/GitHub 跳外链，Email/WeChat/Phone 弹 Modal
+- **HeroSection**（首页第一块）：
+  - 左侧：头像（圆形，`/public/avatar.jpg`）+ 斜体引言
+  - 右侧：中文名 + 英文名、专业方向（中英双语）、学历（硕士/本科，中英双语）
+- 大屏适配：`html { font-size: clamp(16px, 1.1vw, 20px) }` 保证 27寸等大屏不偏小
+
+### 待完成
+- 首页其余 section（项目展示、技能、联系等）
+- 登录系统
+- 留言功能
 
 ## Commands
 - `npm run dev` — 开发服务器 (localhost:3000)
@@ -35,6 +42,6 @@ postcss.config.mjs       # PostCSS 配置（Tailwind）
 - `npm run start` — 启动生产服务器
 
 ## Style Conventions
-- 字体：Fredoka（品牌）、Quicksand（正文）— via next/font/google
-- 配色：深色背景 + 金色/黄色点缀
+- 深色背景 + 金色/黄色点缀，整体风格简洁现代
+- 字体：Fredoka（中文品牌字/标题）、Quicksand（英文正文）、Noto Sans SC（中文正文）
 - 图标来源：iconbuddy.com streamline-ultimate
