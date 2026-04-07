@@ -7,11 +7,11 @@ import { useState, useEffect, useRef } from "react"
    ═══════════════════════════════════════════════════════════ */
 const FLOATING_TEXTS = [
   { text: "Creative Developer",  x: "8%",  y: "22%", size: "1.2rem",  rotate: -8 },
-  { text: "React / Next.js",    x: "65%", y: "14%", size: "1rem",    rotate: 5 },
+  { text: "AI Developer",    x: "65%", y: "14%", size: "1rem",    rotate: 5 },
   { text: "Full-Stack Web",     x: "73%", y: "56%", size: "1.25rem", rotate: -3 },
   { text: "Unity Game Dev",     x: "10%", y: "66%", size: "1.05rem", rotate: 6 },
   { text: "iOS Development",    x: "58%", y: "78%", size: "0.95rem", rotate: -4 },
-  { text: "TypeScript",         x: "20%", y: "82%", size: "1rem",    rotate: 2 },
+  { text: "JavaScript",         x: "20%", y: "82%", size: "1rem",    rotate: 2 },
   { text: "前端开发",            x: "78%", y: "34%", size: "1.15rem", rotate: -6 },
   { text: "游戏开发",            x: "15%", y: "44%", size: "0.9rem",  rotate: 4 },
 ]
@@ -20,21 +20,29 @@ const FLOATING_TEXTS = [
    CONFIGURABLE: Animation parameters
    ═══════════════════════════════════════════════════════════ */
 const SCROLL_DISTANCE = 600       // px of scroll for full transition
-const SHOWCASE_AVATAR_SIZE = 380  // px, showcase mode avatar size
-const SHOWCASE_AVATAR_GLOW = "0 0 80px rgba(255, 215, 0, 0.12), 0 0 160px rgba(255, 215, 0, 0.06)"
-
+const SHOWCASE_AVATAR_MAX = 380   // px, showcase avatar on desktop
+const SHOWCASE_AVATAR_MOBILE = 300 // px, showcase avatar on small screens
+const MOBILE_BREAKPOINT = 640     // px
 // Showcase fades out over 0 → FADE_OUT_END of progress
 // Normal fades in over FADE_IN_START → 1 of progress
 const FADE_OUT_END = 0.5
 const FADE_IN_START = 0.4
+const NORMAL_SLIDE_UP = 200  // px of upward travel during fade-in
 
 /* ─── Helpers ─── */
 function clamp01(v) { return Math.max(0, Math.min(1, v)) }
+function lerp(a, b, t) { return a + (b - a) * t }
 
 export default function HeroSection() {
   const [progress, setProgress] = useState(0)
   const sectionRef = useRef(null)
+  const stickyRef = useRef(null)
+  const normalAvatarRef = useRef(null)
+  const normalTranslateYRef = useRef(NORMAL_SLIDE_UP)
+  const [showcaseSize, setShowcaseSize] = useState(SHOWCASE_AVATAR_MAX)
+  const [avatarPos, setAvatarPos] = useState(null)
 
+  /* ─── Scroll tracking ─── */
   useEffect(() => {
     const onScroll = () => {
       if (!sectionRef.current) return
@@ -46,9 +54,58 @@ export default function HeroSection() {
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
-  // Both driven by the same progress
+  /* ─── Measure avatar source & target positions ─── */
+  useEffect(() => {
+    const measure = () => {
+      if (!normalAvatarRef.current || !stickyRef.current) return
+      const sb = stickyRef.current.getBoundingClientRect()
+      const ab = normalAvatarRef.current.getBoundingClientRect()
+      const isMobile = window.innerWidth < MOBILE_BREAKPOINT
+      const srcSize = isMobile ? SHOWCASE_AVATAR_MOBILE : SHOWCASE_AVATAR_MAX
+      setShowcaseSize(srcSize)
+      setAvatarPos({
+        // Source: centered in the full sticky container
+        sx: sb.width / 2,
+        sy: sb.height / 2,
+        sSize: srcSize,
+        // Target: normal avatar's natural position (compensate for current translateY)
+        tx: ab.left + ab.width / 2 - sb.left,
+        ty: ab.top + ab.height / 2 - sb.top - normalTranslateYRef.current,
+        tSize: ab.width,
+      })
+    }
+    const timer = setTimeout(measure, 50)
+    window.addEventListener("resize", measure)
+    return () => { clearTimeout(timer); window.removeEventListener("resize", measure) }
+  }, [])
+
+  // Derived animation values
   const showcaseOpacity = clamp01(1 - progress / FADE_OUT_END)
   const normalOpacity = clamp01((progress - FADE_IN_START) / (1 - FADE_IN_START))
+  const normalTranslateY = (1 - normalOpacity) * NORMAL_SLIDE_UP
+  normalTranslateYRef.current = normalTranslateY
+
+  // Floating avatar interpolation
+  let floatingAvatarStyle = null
+  if (avatarPos) {
+    const t = progress
+    const size = lerp(avatarPos.sSize, avatarPos.tSize, t)
+    const cx = lerp(avatarPos.sx, avatarPos.tx, t)
+    const cy = lerp(avatarPos.sy, avatarPos.ty, t)
+    const glowFade = clamp01(t * 2)
+    floatingAvatarStyle = {
+      position: "absolute",
+      left: cx - size / 2,
+      top: cy - size / 2,
+      width: size,
+      height: size,
+      zIndex: 20,
+      borderRadius: "9999px",
+      overflow: "hidden",
+      border: `2px solid rgba(255, 215, 0, ${lerp(0.3, 0.25, t)})`,
+      boxShadow: `0 0 ${lerp(80, 40, glowFade)}px rgba(255, 215, 0, ${lerp(0.12, 0.08, glowFade)}), 0 0 ${lerp(160, 80, glowFade)}px rgba(255, 215, 0, ${lerp(0.06, 0, glowFade)})`,
+    }
+  }
 
   return (
     <section
@@ -56,6 +113,7 @@ export default function HeroSection() {
       style={{ height: `calc(100vh + ${SCROLL_DISTANCE}px)` }}
     >
       <div
+        ref={stickyRef}
         className="sticky top-0 h-screen"
         style={{
           fontFamily: "var(--font-quicksand)",
@@ -73,18 +131,21 @@ export default function HeroSection() {
           style={{
             gridArea: "1 / 1",
             opacity: normalOpacity,
+            transform: `translateY(${normalTranslateY}px)`,
             pointerEvents: normalOpacity < 0.1 ? "none" : "auto",
           }}
         >
-          <div className="w-full flex flex-col md:flex-row gap-14 md:gap-16 items-center">
+          <div className="w-full flex flex-col md:flex-row gap-6 md:gap-16 items-center">
 
-            {/* Left: Avatar + Quote */}
-            <div className="flex flex-col items-center gap-5 md:w-1/3 flex-shrink-0">
+            {/* Left: Avatar placeholder + Quote */}
+            <div className="flex flex-col items-center gap-3 md:gap-5 md:w-1/3 flex-shrink-0">
               <div
-                className="w-56 h-56 rounded-full overflow-hidden"
+                ref={normalAvatarRef}
+                className="w-44 h-44 md:w-56 md:h-56 rounded-full overflow-hidden"
                 style={{
                   border: "2px solid rgba(255, 215, 0, 0.25)",
                   boxShadow: "0 0 40px rgba(255, 215, 0, 0.08)",
+                  visibility: "hidden",
                 }}
               >
                 <img
@@ -93,7 +154,7 @@ export default function HeroSection() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <p className="text-base text-gray-500 text-center tracking-wide italic">
+              <p className="text-sm md:text-base text-gray-500 text-center tracking-wide italic">
                 &ldquo;Non terrae plus ultra!&rdquo;
               </p>
             </div>
@@ -105,18 +166,18 @@ export default function HeroSection() {
             />
 
             {/* Right: Info */}
-            <div className="flex flex-col gap-8 md:w-2/3">
+            <div className="flex flex-col gap-4 md:gap-8 md:w-2/3">
 
               {/* Level 1: Names */}
               <div className="flex flex-col gap-1">
                 <h1
-                  className="text-5xl md:text-6xl font-bold text-white leading-tight"
+                  className="text-4xl md:text-6xl font-bold text-white leading-tight"
                   style={{ fontFamily: "var(--font-noto-sc)", letterSpacing: "0.05em" }}
                 >
                   马超越昊
                 </h1>
                 <h2
-                  className="text-3xl md:text-4xl font-bold leading-tight"
+                  className="text-2xl md:text-4xl font-bold leading-tight"
                   style={{
                     fontFamily: "var(--font-quicksand)",
                     color: "rgba(255, 210, 0, 0.82)",
@@ -178,7 +239,7 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* ═══ Showcase Layer (absolute overlay, fades out) ═══ */}
+        {/* ═══ Showcase Layer (floating texts only, avatar is now independent) ═══ */}
         <div
           className="overflow-hidden"
           style={{
@@ -208,22 +269,14 @@ export default function HeroSection() {
               {item.text}
             </span>
           ))}
+        </div>
 
-          {/* Large centered avatar */}
-          <div
-            className="rounded-full overflow-hidden flex-shrink-0"
-            style={{
-              width: SHOWCASE_AVATAR_SIZE,
-              height: SHOWCASE_AVATAR_SIZE,
-              transform: `scale(${1 - progress * 0.3})`,
-              border: "2px solid rgba(255, 215, 0, 0.3)",
-              boxShadow: SHOWCASE_AVATAR_GLOW,
-              transition: "transform 0.1s linear",
-            }}
-          >
+        {/* ═══ Floating Avatar (morphs from showcase → normal position) ═══ */}
+        {floatingAvatarStyle && (
+          <div style={floatingAvatarStyle}>
             <img src="/avatar.jpg" alt="Otto Ma" className="w-full h-full object-cover" />
           </div>
-        </div>
+        )}
 
       </div>
     </section>

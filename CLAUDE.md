@@ -28,11 +28,13 @@ public/                  # favicon、SVG 图标、avatar.jpg
 - **Footer + SocialLinks**：固定底部，Instagram/Bilibili/GitHub 跳外链，Email/WeChat/Phone 弹 Modal
 - **HeroSection 展示态**（滚动触发视觉过渡）：
   - 单 section 内 sticky 容器，CSS Grid 布局（`grid-template: 1fr / 1fr`），两层同 cell 叠加
-  - 正常层：grid child，由 `align-items: center` 居中，`paddingTop: 5rem` 预留 navbar 空间
-  - 展示层：`position: absolute` + `inset: 0` 覆盖在上，大头像（380px）居中 + 8 个漂浮文字（hover 放大高亮）
+  - 正常层：grid child，由 `align-items: center` 居中，`paddingTop: 5rem` 预留 navbar 空间，淡入时同步 `translateY` 上滑（NORMAL_SLIDE_UP = 200px）
+  - 展示层：`position: absolute` + `inset: 0` 覆盖在上，仅含漂浮文字（hover 放大高亮）
+  - **浮动头像**：独立于两层，`position: absolute` 在 sticky 容器内，通过 ref 测量起点（sticky 中心）和终点（正常层占位头像位置）进行 lerp 插值，实现从展示层大头像（桌面 380px / 移动 300px）丝滑移动+缩放到正常层小头像位置。两层各自的头像设为 `visibility: hidden` 仅用于占位和测量
   - 滚动进度线性映射（无 easeOut），展示层 0→50% 淡出，正常层 40%→100% 淡入
-  - 动画参数集中在文件顶部（FLOATING_TEXTS、SCROLL_DISTANCE、FADE_OUT_END、FADE_IN_START）
+  - 动画参数集中在文件顶部（FLOATING_TEXTS、SCROLL_DISTANCE、FADE_OUT_END、FADE_IN_START、NORMAL_SLIDE_UP）
   - 漂浮文字样式在 globals.css `.hero-floating-text`
+  - 移动端适配：展示层头像缩小、正常层头像/字号/间距响应式缩减
   - ⚠️ **关键注意**：page.jsx 外层容器必须用 `overflowX: "clip"` 而非 `overflow-x-hidden`，否则会破坏 sticky 定位
 - 大屏适配：`html { font-size: clamp(16px, 1.1vw, 20px) }` 保证 27寸等大屏不偏小
 - **README** 已更新：双语项目介绍 + 技术栈 + 作者信息
