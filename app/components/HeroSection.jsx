@@ -60,7 +60,7 @@ export default function HeroSection() {
               前端/全栈 Web 开发、Unity 游戏开发与 iOS 移动端应用开发
             </p>
             <p className="text-sm text-gray-500 leading-relaxed">
-              Front-End Web · Unity Game Development · iOS Mobile App Development
+              Front-End / Full-Stack Web · Unity Game Development · iOS Mobile App Development
             </p>
           </div>
 
