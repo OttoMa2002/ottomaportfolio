@@ -100,3 +100,28 @@ html, body {
 .flame-text.flame-off::after {
   opacity: 0 !important;
 }
+
+/* ─── Hero floating text ─── */
+.hero-floating-text {
+  position: absolute;
+  color: rgba(255, 215, 0, 0.12);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  cursor: default;
+  user-select: none;
+  transform: rotate(var(--ft-rotate, 0deg));
+  transition: transform 0.35s ease, color 0.35s ease, text-shadow 0.35s ease;
+  animation: float-drift 6s ease-in-out infinite alternate;
+}
+
+.hero-floating-text:hover {
+  transform: rotate(var(--ft-rotate, 0deg)) scale(1.35);
+  color: rgba(255, 215, 0, 0.5);
+  text-shadow: 0 0 24px rgba(255, 215, 0, 0.2);
+}
+
+@keyframes float-drift {
+  0%   { translate: 0 0; }
+  100% { translate: 0 8px; }
+}

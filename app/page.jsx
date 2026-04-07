@@ -5,10 +5,11 @@ import HeroSection from "./components/HeroSection"
 export default function Home() {
   return (
     <div
-      className="relative min-h-screen text-white overflow-x-hidden"
+      className="relative min-h-screen text-white"
       style={{
         background:
           "linear-gradient(135deg, #0a0a0a 0%, #1a1508 50%, #0d0b04 100%)",
+        overflowX: "clip",
       }}
     >
       {/* Background glow effects */}
