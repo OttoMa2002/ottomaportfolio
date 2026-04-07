@@ -1,16 +1,18 @@
-# React + Vite
+# Otto's Portfolio / Otto 的个人网站
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Personal portfolio website showcasing my work, education, and interests.
+个人作品集网站，展示项目经历、教育背景与个人兴趣。
 
-Currently, two official plugins are available:
+## Preview / 预览
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+![Preview](public/preview.png)
 
-## React Compiler
+## Tech Stack / 技术栈
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React + Next.js (App Router)
+- Tailwind CSS v4
+- Deployed on Vercel
 
-## Expanding the ESLint configuration
+## Author / 作者
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**Otto Ma** — [ottokeigo.com](https://ottokeigo.com)
