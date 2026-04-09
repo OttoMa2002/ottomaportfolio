@@ -36,7 +36,7 @@ public/                  # favicon、SVG 图标、logo（三版配色）
   - 滚动进度线性映射（无 easeOut），展示层 0→50% 淡出，正常层 40%→100% 淡入
   - 动画参数集中在文件顶部（FLOATING_TEXTS、SCROLL_DISTANCE、FADE_OUT_END、FADE_IN_START、NORMAL_SLIDE_UP）
   - 漂浮文字样式在 globals.css `.hero-floating-text`
-  - 移动端适配：展示层头像缩小、正常层头像/字号/间距响应式缩减
+  - **移动端适配**：禁用浮动头像位移动画（性能考虑），展示层显示静态居中 logo，正常层头像直接可见，滚动仅做淡入淡出；桌面端保留完整 lerp 位移动画
   - ⚠️ **关键注意**：page.jsx 外层容器必须用 `overflowX: "clip"` 而非 `overflow-x-hidden`，否则会破坏 sticky 定位
 - 大屏适配：`html { font-size: clamp(16px, 1.1vw, 20px) }` 保证 27寸等大屏不偏小
 - **Logo**：OT 字母组合 logo，三版配色（blackyellow / yellowblack / neon），已裁为正方形。blackyellow 用作 favicon 和 HeroSection 头像

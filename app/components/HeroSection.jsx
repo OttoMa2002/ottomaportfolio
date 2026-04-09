@@ -45,11 +45,13 @@ export default function HeroSection() {
   const progressRef = useRef(0)
   const avatarPosRef = useRef(null)
   const rafRef = useRef(null)
+  const isMobileRef = useRef(false)
 
   /* ─── Apply all animated styles directly to DOM ─── */
   const applyStyles = useCallback(() => {
     const p = progressRef.current
     const pos = avatarPosRef.current
+    const mobile = isMobileRef.current
 
     // Showcase layer
     const showcaseOpacity = clamp01(1 - p / FADE_OUT_END)
@@ -67,19 +69,29 @@ export default function HeroSection() {
       normalLayerRef.current.style.pointerEvents = normalOpacity < 0.1 ? "none" : "auto"
     }
 
-    // Floating avatar
-    if (floatingAvatarRef.current && pos) {
-      const size = lerp(pos.sSize, pos.tSize, p)
-      const cx = lerp(pos.sx, pos.tx, p)
-      const cy = lerp(pos.sy, pos.ty, p)
-      const glowFade = clamp01(p * 2)
-      const el = floatingAvatarRef.current
-      el.style.left = `${cx - size / 2}px`
-      el.style.top = `${cy - size / 2}px`
-      el.style.width = `${size}px`
-      el.style.height = `${size}px`
-      el.style.border = `2px solid rgba(255, 215, 0, ${lerp(0.3, 0.25, p)})`
-      el.style.boxShadow = `0 0 ${lerp(80, 40, glowFade)}px rgba(255, 215, 0, ${lerp(0.12, 0.08, glowFade)}), 0 0 ${lerp(160, 80, glowFade)}px rgba(255, 215, 0, ${lerp(0.06, 0, glowFade)})`
+    // Floating avatar — desktop only
+    if (floatingAvatarRef.current) {
+      if (mobile) {
+        floatingAvatarRef.current.style.display = "none"
+      } else if (pos) {
+        floatingAvatarRef.current.style.display = ""
+        const size = lerp(pos.sSize, pos.tSize, p)
+        const cx = lerp(pos.sx, pos.tx, p)
+        const cy = lerp(pos.sy, pos.ty, p)
+        const glowFade = clamp01(p * 2)
+        const el = floatingAvatarRef.current
+        el.style.left = `${cx - size / 2}px`
+        el.style.top = `${cy - size / 2}px`
+        el.style.width = `${size}px`
+        el.style.height = `${size}px`
+        el.style.border = `2px solid rgba(255, 215, 0, ${lerp(0.3, 0.25, p)})`
+        el.style.boxShadow = `0 0 ${lerp(80, 40, glowFade)}px rgba(255, 215, 0, ${lerp(0.12, 0.08, glowFade)}), 0 0 ${lerp(160, 80, glowFade)}px rgba(255, 215, 0, ${lerp(0.06, 0, glowFade)})`
+      }
+    }
+
+    // Normal layer avatar visibility — hidden on desktop (floating avatar covers it), visible on mobile
+    if (normalAvatarRef.current) {
+      normalAvatarRef.current.style.visibility = mobile ? "visible" : "hidden"
     }
   }, [])
 
@@ -106,14 +118,21 @@ export default function HeroSection() {
     const measure = () => {
       if (!normalAvatarRef.current || !stickyRef.current || !normalLayerRef.current) return
 
+      isMobileRef.current = window.innerWidth < MOBILE_BREAKPOINT
+
+      // Skip position measurement on mobile (no floating avatar animation)
+      if (isMobileRef.current) {
+        applyStyles()
+        return
+      }
+
       // Temporarily reset transform so getBoundingClientRect gives the natural position
       const savedTransform = normalLayerRef.current.style.transform
       normalLayerRef.current.style.transform = "translateY(0px)"
 
       const sb = stickyRef.current.getBoundingClientRect()
       const ab = normalAvatarRef.current.getBoundingClientRect()
-      const isMobile = window.innerWidth < MOBILE_BREAKPOINT
-      const srcSize = isMobile ? SHOWCASE_AVATAR_MOBILE : SHOWCASE_AVATAR_MAX
+      const srcSize = SHOWCASE_AVATAR_MAX
 
       avatarPosRef.current = {
         sx: sb.width / 2,
@@ -268,7 +287,7 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* ═══ Showcase Layer (floating texts only, avatar is now independent) ═══ */}
+        {/* ═══ Showcase Layer (floating texts + centered logo on mobile) ═══ */}
         <div
           ref={showcaseLayerRef}
           className="overflow-hidden"
@@ -283,6 +302,19 @@ export default function HeroSection() {
             pointerEvents: "auto",
           }}
         >
+          {/* Mobile-only showcase avatar (static, no position animation) */}
+          <div
+            className="block md:hidden rounded-full overflow-hidden"
+            style={{
+              width: SHOWCASE_AVATAR_MOBILE,
+              height: SHOWCASE_AVATAR_MOBILE,
+              border: "2px solid rgba(255, 215, 0, 0.3)",
+              boxShadow: "0 0 80px rgba(255, 215, 0, 0.12), 0 0 160px rgba(255, 215, 0, 0.06)",
+            }}
+          >
+            <img src="/blackyellow.png" alt="Otto Ma" className="w-full h-full object-cover" />
+          </div>
+
           {/* Floating texts */}
           {FLOATING_TEXTS.map((item, i) => (
             <span
@@ -301,7 +333,7 @@ export default function HeroSection() {
           ))}
         </div>
 
-        {/* ═══ Floating Avatar (morphs from showcase → normal position) ═══ */}
+        {/* ═══ Floating Avatar (desktop only — morphs from showcase → normal position) ═══ */}
         <div
           ref={floatingAvatarRef}
           style={{
