@@ -51,8 +51,18 @@ export default function HeroSection() {
   /* ─── Apply all animated styles directly to DOM ─── */
   const applyStyles = useCallback(() => {
     const p = progressRef.current
+
+    // ── Mobile: only update two opacity values, nothing else ──
+    if (isMobileRef.current) {
+      const showcaseOpacity = clamp01(1 - p / FADE_OUT_END)
+      const normalOpacity = clamp01((p - FADE_IN_START) / (1 - FADE_IN_START))
+      if (showcaseLayerRef.current) showcaseLayerRef.current.style.opacity = showcaseOpacity
+      if (normalLayerRef.current) normalLayerRef.current.style.opacity = normalOpacity
+      return
+    }
+
+    // ── Desktop: full animation ──
     const pos = avatarPosRef.current
-    const mobile = isMobileRef.current
 
     // Showcase layer
     const showcaseOpacity = clamp01(1 - p / FADE_OUT_END)
@@ -70,29 +80,24 @@ export default function HeroSection() {
       normalLayerRef.current.style.pointerEvents = normalOpacity < 0.1 ? "none" : "auto"
     }
 
-    // Floating avatar — desktop only
-    if (floatingAvatarRef.current) {
-      if (mobile) {
-        floatingAvatarRef.current.style.display = "none"
-      } else if (pos) {
-        floatingAvatarRef.current.style.display = ""
-        const size = lerp(pos.sSize, pos.tSize, p)
-        const cx = lerp(pos.sx, pos.tx, p)
-        const cy = lerp(pos.sy, pos.ty, p)
-        const glowFade = clamp01(p * 2)
-        const el = floatingAvatarRef.current
-        el.style.left = `${cx - size / 2}px`
-        el.style.top = `${cy - size / 2}px`
-        el.style.width = `${size}px`
-        el.style.height = `${size}px`
-        el.style.border = `2px solid rgba(255, 215, 0, ${lerp(0.3, 0.25, p)})`
-        el.style.boxShadow = `0 0 ${lerp(80, 40, glowFade)}px rgba(255, 215, 0, ${lerp(0.12, 0.08, glowFade)}), 0 0 ${lerp(160, 80, glowFade)}px rgba(255, 215, 0, ${lerp(0.06, 0, glowFade)})`
-      }
+    // Floating avatar
+    if (floatingAvatarRef.current && pos) {
+      const size = lerp(pos.sSize, pos.tSize, p)
+      const cx = lerp(pos.sx, pos.tx, p)
+      const cy = lerp(pos.sy, pos.ty, p)
+      const glowFade = clamp01(p * 2)
+      const el = floatingAvatarRef.current
+      el.style.left = `${cx - size / 2}px`
+      el.style.top = `${cy - size / 2}px`
+      el.style.width = `${size}px`
+      el.style.height = `${size}px`
+      el.style.border = `2px solid rgba(255, 215, 0, ${lerp(0.3, 0.25, p)})`
+      el.style.boxShadow = `0 0 ${lerp(80, 40, glowFade)}px rgba(255, 215, 0, ${lerp(0.12, 0.08, glowFade)}), 0 0 ${lerp(160, 80, glowFade)}px rgba(255, 215, 0, ${lerp(0.06, 0, glowFade)})`
     }
 
-    // Normal layer avatar visibility — hidden on desktop (floating avatar covers it), visible on mobile
+    // Normal layer avatar visibility — hidden on desktop (floating avatar covers it)
     if (normalAvatarRef.current) {
-      normalAvatarRef.current.style.visibility = mobile ? "visible" : "hidden"
+      normalAvatarRef.current.style.visibility = "hidden"
     }
   }, [])
 
@@ -130,8 +135,12 @@ export default function HeroSection() {
 
       isMobileRef.current = window.innerWidth < MOBILE_BREAKPOINT
 
-      // Skip position measurement on mobile (no floating avatar animation)
+      // Mobile: no position measurement, no floating avatar, no translateY
       if (isMobileRef.current) {
+        if (floatingAvatarRef.current) floatingAvatarRef.current.style.display = "none"
+        if (normalAvatarRef.current) normalAvatarRef.current.style.visibility = "visible"
+        normalLayerRef.current.style.transform = "none"
+        normalLayerRef.current.style.pointerEvents = "auto"
         applyStyles()
         return
       }
