@@ -46,6 +46,7 @@ export default function HeroSection() {
   const avatarPosRef = useRef(null)
   const rafRef = useRef(null)
   const isMobileRef = useRef(false)
+  const sectionTopRef = useRef(0) // cached offsetTop to avoid getBoundingClientRect in scroll
 
   /* ─── Apply all animated styles directly to DOM ─── */
   const applyStyles = useCallback(() => {
@@ -95,20 +96,29 @@ export default function HeroSection() {
     }
   }, [])
 
-  /* ─── Scroll tracking via rAF (no setState) ─── */
+  /* ─── Scroll tracking via rAF (no setState, no getBoundingClientRect) ─── */
   useEffect(() => {
+    const cacheTop = () => {
+      if (sectionRef.current) {
+        sectionTopRef.current = sectionRef.current.offsetTop
+      }
+    }
+    cacheTop()
+
     const onScroll = () => {
-      if (!sectionRef.current) return
-      const scrolled = Math.max(0, -sectionRef.current.getBoundingClientRect().top)
+      const scrolled = Math.max(0, window.scrollY - sectionTopRef.current)
       progressRef.current = Math.min(1, scrolled / SCROLL_DISTANCE)
 
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
       rafRef.current = requestAnimationFrame(applyStyles)
     }
+
     window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", cacheTop)
     onScroll()
     return () => {
       window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", cacheTop)
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
   }, [applyStyles])
