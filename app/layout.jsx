@@ -22,7 +22,7 @@ const notoSansSC = Noto_Sans_SC({
 export const metadata = {
   title: "Otto's Home",
   icons: {
-    icon: "/小小猪.png",
+    icon: "/blackyellow.png",
   },
 }
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useEffect, useRef, useCallback } from "react"
 
 /* ═══════════════════════════════════════════════════════════
    CONFIGURABLE: Floating texts around the showcase avatar
@@ -34,78 +34,106 @@ function clamp01(v) { return Math.max(0, Math.min(1, v)) }
 function lerp(a, b, t) { return a + (b - a) * t }
 
 export default function HeroSection() {
-  const [progress, setProgress] = useState(0)
   const sectionRef = useRef(null)
   const stickyRef = useRef(null)
   const normalAvatarRef = useRef(null)
-  const normalTranslateYRef = useRef(NORMAL_SLIDE_UP)
-  const [showcaseSize, setShowcaseSize] = useState(SHOWCASE_AVATAR_MAX)
-  const [avatarPos, setAvatarPos] = useState(null)
+  const showcaseLayerRef = useRef(null)
+  const normalLayerRef = useRef(null)
+  const floatingAvatarRef = useRef(null)
 
-  /* ─── Scroll tracking ─── */
+  // Mutable refs for animation state (no re-renders)
+  const progressRef = useRef(0)
+  const avatarPosRef = useRef(null)
+  const rafRef = useRef(null)
+
+  /* ─── Apply all animated styles directly to DOM ─── */
+  const applyStyles = useCallback(() => {
+    const p = progressRef.current
+    const pos = avatarPosRef.current
+
+    // Showcase layer
+    const showcaseOpacity = clamp01(1 - p / FADE_OUT_END)
+    if (showcaseLayerRef.current) {
+      showcaseLayerRef.current.style.opacity = showcaseOpacity
+      showcaseLayerRef.current.style.pointerEvents = showcaseOpacity < 0.1 ? "none" : "auto"
+    }
+
+    // Normal layer
+    const normalOpacity = clamp01((p - FADE_IN_START) / (1 - FADE_IN_START))
+    const normalTranslateY = (1 - normalOpacity) * NORMAL_SLIDE_UP
+    if (normalLayerRef.current) {
+      normalLayerRef.current.style.opacity = normalOpacity
+      normalLayerRef.current.style.transform = `translateY(${normalTranslateY}px)`
+      normalLayerRef.current.style.pointerEvents = normalOpacity < 0.1 ? "none" : "auto"
+    }
+
+    // Floating avatar
+    if (floatingAvatarRef.current && pos) {
+      const size = lerp(pos.sSize, pos.tSize, p)
+      const cx = lerp(pos.sx, pos.tx, p)
+      const cy = lerp(pos.sy, pos.ty, p)
+      const glowFade = clamp01(p * 2)
+      const el = floatingAvatarRef.current
+      el.style.left = `${cx - size / 2}px`
+      el.style.top = `${cy - size / 2}px`
+      el.style.width = `${size}px`
+      el.style.height = `${size}px`
+      el.style.border = `2px solid rgba(255, 215, 0, ${lerp(0.3, 0.25, p)})`
+      el.style.boxShadow = `0 0 ${lerp(80, 40, glowFade)}px rgba(255, 215, 0, ${lerp(0.12, 0.08, glowFade)}), 0 0 ${lerp(160, 80, glowFade)}px rgba(255, 215, 0, ${lerp(0.06, 0, glowFade)})`
+    }
+  }, [])
+
+  /* ─── Scroll tracking via rAF (no setState) ─── */
   useEffect(() => {
     const onScroll = () => {
       if (!sectionRef.current) return
       const scrolled = Math.max(0, -sectionRef.current.getBoundingClientRect().top)
-      setProgress(Math.min(1, scrolled / SCROLL_DISTANCE))
+      progressRef.current = Math.min(1, scrolled / SCROLL_DISTANCE)
+
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      rafRef.current = requestAnimationFrame(applyStyles)
     }
     window.addEventListener("scroll", onScroll, { passive: true })
     onScroll()
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    }
+  }, [applyStyles])
 
   /* ─── Measure avatar source & target positions ─── */
   useEffect(() => {
     const measure = () => {
-      if (!normalAvatarRef.current || !stickyRef.current) return
+      if (!normalAvatarRef.current || !stickyRef.current || !normalLayerRef.current) return
+
+      // Temporarily reset transform so getBoundingClientRect gives the natural position
+      const savedTransform = normalLayerRef.current.style.transform
+      normalLayerRef.current.style.transform = "translateY(0px)"
+
       const sb = stickyRef.current.getBoundingClientRect()
       const ab = normalAvatarRef.current.getBoundingClientRect()
       const isMobile = window.innerWidth < MOBILE_BREAKPOINT
       const srcSize = isMobile ? SHOWCASE_AVATAR_MOBILE : SHOWCASE_AVATAR_MAX
-      setShowcaseSize(srcSize)
-      setAvatarPos({
-        // Source: centered in the full sticky container
+
+      avatarPosRef.current = {
         sx: sb.width / 2,
         sy: sb.height / 2,
         sSize: srcSize,
-        // Target: normal avatar's natural position (compensate for current translateY)
         tx: ab.left + ab.width / 2 - sb.left,
-        ty: ab.top + ab.height / 2 - sb.top - normalTranslateYRef.current,
+        ty: ab.top + ab.height / 2 - sb.top,
         tSize: ab.width,
-      })
+      }
+
+      // Restore transform
+      normalLayerRef.current.style.transform = savedTransform
+
+      // Apply immediately after measure
+      applyStyles()
     }
     const timer = setTimeout(measure, 50)
     window.addEventListener("resize", measure)
     return () => { clearTimeout(timer); window.removeEventListener("resize", measure) }
-  }, [])
-
-  // Derived animation values
-  const showcaseOpacity = clamp01(1 - progress / FADE_OUT_END)
-  const normalOpacity = clamp01((progress - FADE_IN_START) / (1 - FADE_IN_START))
-  const normalTranslateY = (1 - normalOpacity) * NORMAL_SLIDE_UP
-  normalTranslateYRef.current = normalTranslateY
-
-  // Floating avatar interpolation
-  let floatingAvatarStyle = null
-  if (avatarPos) {
-    const t = progress
-    const size = lerp(avatarPos.sSize, avatarPos.tSize, t)
-    const cx = lerp(avatarPos.sx, avatarPos.tx, t)
-    const cy = lerp(avatarPos.sy, avatarPos.ty, t)
-    const glowFade = clamp01(t * 2)
-    floatingAvatarStyle = {
-      position: "absolute",
-      left: cx - size / 2,
-      top: cy - size / 2,
-      width: size,
-      height: size,
-      zIndex: 20,
-      borderRadius: "9999px",
-      overflow: "hidden",
-      border: `2px solid rgba(255, 215, 0, ${lerp(0.3, 0.25, t)})`,
-      boxShadow: `0 0 ${lerp(80, 40, glowFade)}px rgba(255, 215, 0, ${lerp(0.12, 0.08, glowFade)}), 0 0 ${lerp(160, 80, glowFade)}px rgba(255, 215, 0, ${lerp(0.06, 0, glowFade)})`,
-    }
-  }
+  }, [applyStyles])
 
   return (
     <section
@@ -127,12 +155,13 @@ export default function HeroSection() {
 
         {/* ═══ Normal Layout Layer (grid child, centered by grid) ═══ */}
         <div
+          ref={normalLayerRef}
           className="px-10 md:px-20 lg:px-32"
           style={{
             gridArea: "1 / 1",
-            opacity: normalOpacity,
-            transform: `translateY(${normalTranslateY}px)`,
-            pointerEvents: normalOpacity < 0.1 ? "none" : "auto",
+            opacity: 0,
+            transform: `translateY(${NORMAL_SLIDE_UP}px)`,
+            pointerEvents: "none",
           }}
         >
           <div className="w-full flex flex-col md:flex-row gap-6 md:gap-16 items-center">
@@ -149,7 +178,7 @@ export default function HeroSection() {
                 }}
               >
                 <img
-                  src="/avatar.jpg"
+                  src="/blackyellow.png"
                   alt="Otto Ma"
                   className="w-full h-full object-cover"
                 />
@@ -241,6 +270,7 @@ export default function HeroSection() {
 
         {/* ═══ Showcase Layer (floating texts only, avatar is now independent) ═══ */}
         <div
+          ref={showcaseLayerRef}
           className="overflow-hidden"
           style={{
             position: "absolute",
@@ -249,8 +279,8 @@ export default function HeroSection() {
             alignItems: "center",
             justifyContent: "center",
             zIndex: 10,
-            opacity: showcaseOpacity,
-            pointerEvents: showcaseOpacity < 0.1 ? "none" : "auto",
+            opacity: 1,
+            pointerEvents: "auto",
           }}
         >
           {/* Floating texts */}
@@ -272,11 +302,18 @@ export default function HeroSection() {
         </div>
 
         {/* ═══ Floating Avatar (morphs from showcase → normal position) ═══ */}
-        {floatingAvatarStyle && (
-          <div style={floatingAvatarStyle}>
-            <img src="/avatar.jpg" alt="Otto Ma" className="w-full h-full object-cover" />
-          </div>
-        )}
+        <div
+          ref={floatingAvatarRef}
+          style={{
+            position: "absolute",
+            zIndex: 20,
+            borderRadius: "9999px",
+            overflow: "hidden",
+            willChange: "left, top, width, height",
+          }}
+        >
+          <img src="/blackyellow.png" alt="Otto Ma" className="w-full h-full object-cover" />
+        </div>
 
       </div>
     </section>
