@@ -216,9 +216,10 @@ export default function HeroSection() {
                 }}
               >
                 <img
-                  src="/blackyellow.png"
+                  src="/yellow.jpg"
                   alt="Otto Ma"
                   className="w-full h-full object-cover"
+                  style={{ transform: "scale(1.7)" }}
                 />
               </div>
               <p className="text-sm md:text-base text-gray-500 text-center tracking-wide italic">
@@ -331,7 +332,12 @@ export default function HeroSection() {
               boxShadow: "0 0 80px rgba(255, 215, 0, 0.12), 0 0 160px rgba(255, 215, 0, 0.06)",
             }}
           >
-            <img src="/blackyellow.png" alt="Otto Ma" className="w-full h-full object-cover" />
+            <img
+              src="/yellow.jpg"
+              alt="Otto Ma"
+              className="w-full h-full object-cover"
+              style={{ transform: "scale(1.7)" }}
+            />
           </div>
 
           {/* Floating texts */}
@@ -363,7 +369,12 @@ export default function HeroSection() {
             willChange: "left, top, width, height",
           }}
         >
-          <img src="/blackyellow.png" alt="Otto Ma" className="w-full h-full object-cover" />
+          <img
+            src="/yellow.jpg"
+            alt="Otto Ma"
+            className="w-full h-full object-cover"
+            style={{ transform: "scale(1.7)" }}
+          />
         </div>
 
       </div>

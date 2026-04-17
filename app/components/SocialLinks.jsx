@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { createPortal } from "react-dom"
 
 const CONTACT_INFO = {
@@ -85,21 +85,42 @@ const SOCIAL_ITEMS = [
   },
 ]
 
+const EXIT_DURATION = 160
+
 function ContactModal({ item, onClose }) {
   const overlayRef = useRef(null)
+  const [entered, setEntered] = useState(false)
+  const [exiting, setExiting] = useState(false)
+
+  const startClose = useCallback(() => {
+    setExiting(true)
+    setTimeout(onClose, EXIT_DURATION)
+  }, [onClose])
 
   useEffect(() => {
-    const handleKey = (e) => { if (e.key === "Escape") onClose() }
+    const id = requestAnimationFrame(() => setEntered(true))
+    return () => cancelAnimationFrame(id)
+  }, [])
+
+  useEffect(() => {
+    const handleKey = (e) => { if (e.key === "Escape") startClose() }
     document.addEventListener("keydown", handleKey)
     return () => document.removeEventListener("keydown", handleKey)
-  }, [onClose])
+  }, [startClose])
+
+  const open = entered && !exiting
 
   return createPortal(
     <div
       ref={overlayRef}
       className="fixed inset-0 z-100 flex items-center justify-center"
-      style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)" }}
-      onClick={(e) => { if (e.target === overlayRef.current) onClose() }}
+      style={{
+        background: "rgba(0,0,0,0.6)",
+        backdropFilter: "blur(4px)",
+        opacity: open ? 1 : 0,
+        transition: exiting ? `opacity ${EXIT_DURATION}ms ease-in` : "opacity 180ms ease-out",
+      }}
+      onClick={(e) => { if (e.target === overlayRef.current) startClose() }}
     >
       <div
         className="relative rounded-2xl px-8 py-6 min-w-60 text-center"
@@ -107,9 +128,16 @@ function ContactModal({ item, onClose }) {
           background: "rgba(22, 22, 22, 0.98)",
           border: "1px solid rgba(255, 255, 255, 0.06)",
           fontFamily: "var(--font-quicksand)",
+          opacity: open ? 1 : 0,
+          transform: open ? "translateY(0) scale(1)" : "translateY(8px) scale(0.96)",
+          filter: open ? "blur(0)" : "blur(5px)",
+          transition: exiting
+            ? `opacity ${EXIT_DURATION}ms ease-in, transform ${EXIT_DURATION}ms ease-in, filter ${EXIT_DURATION}ms ease-in`
+            : "opacity 260ms ease-out, transform 260ms cubic-bezier(0.22, 1, 0.36, 1), filter 260ms ease-out",
+          willChange: "opacity, transform, filter",
         }}
       >
-<p className="text-xs text-white/50 uppercase tracking-widest mb-2">
+        <p className="text-xs text-white/50 uppercase tracking-widest mb-2">
           {item.modalTitle}
         </p>
         <p className="text-gray-400 text-base font-medium select-all">
