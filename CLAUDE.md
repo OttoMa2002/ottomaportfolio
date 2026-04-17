@@ -26,9 +26,9 @@ public/                  # 图片素材（见下）
 ### 已完成
 - **Navbar**：固定顶部，火焰标题 + 走马灯欢迎词
 - **Footer + SocialLinks**：底部社交图标；联系方式 Modal 带 focus-in 淡入 + 快速淡出动画
-- **HeroSection**：sticky 容器里"展示层（漂浮文字 + 大头像）" ↔ "正常层（自我介绍）"滚动过渡，桌面端用 ref + rAF 直接改 DOM 避免 React 重渲染；移动端禁用位移动画只做淡入淡出
+- **HeroSection**：sticky 容器里"展示层（漂浮文字 + 大头像）" ↔ "正常层（自我介绍）"滚动过渡，桌面端用 ref + rAF 直接改 DOM 避免 React 重渲染；移动端禁用位移动画只做淡入淡出；头像 hover 彩蛋：放大 + 呼吸光晕 + 金色描边 + 渐变切换到 `blackav.jpg` 真人照
 - 大屏字号自适应（27寸不偏小）
-- **Logo / 头像**：`neon_back.png`（透明底，favicon）/ `yellow.jpg`（Hero 头像，CSS `scale(1.7)` 放大居中）/ `neon.jpg` + `mult.jpg` 为素材源文件
+- **Logo / 头像**：`neon_back.png`（透明底，favicon）/ `yellow.jpg`（Hero 头像，CSS `scale(1.7)` 放大居中）/ `blackav.jpg`（hover 切换的真人照）/ `neon.jpg` + `mult.jpg` 为素材源文件
 
 ### 待完成
 - 首页其余 section（项目、技能、联系）
