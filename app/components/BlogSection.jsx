@@ -1,6 +1,9 @@
 import Link from "next/link"
+import { getAllPosts } from "../../lib/posts"
 
 export default function BlogSection() {
+  const recentPosts = getAllPosts().slice(0, 3)
+
   return (
     <section
       className="px-8 md:px-16 lg:px-24 pt-6 md:pt-8 pb-10 md:pb-14 mt-[-16vh] md:mt-[-20vh] relative z-8"
@@ -86,7 +89,7 @@ export default function BlogSection() {
               }}
             />
 
-            {/* 下半：最近文章预留位 */}
+            {/* 下半：最近文章 */}
             <div className="flex flex-col justify-center md:flex-[3_3_0%]">
               <div className="w-fit mx-auto flex flex-col gap-3 text-center">
                 <p
@@ -95,9 +98,28 @@ export default function BlogSection() {
                 >
                   Recent Posts · 最近文章
                 </p>
-                <p className="text-sm text-gray-600 italic">
-                  文章正在路上，敬请期待…
-                </p>
+                {recentPosts.length === 0 ? (
+                  <p className="text-sm text-gray-600 italic">
+                    文章正在路上，敬请期待…
+                  </p>
+                ) : (
+                  <ul className="flex flex-col gap-2">
+                    {recentPosts.map((post) => (
+                      <li key={post.slug}>
+                        <Link
+                          href={`/blog/${post.slug}`}
+                          className="group inline-flex items-baseline gap-3 text-sm md:text-base text-gray-400 hover:text-yellow-400 transition-colors"
+                          style={{ fontFamily: "var(--font-noto-sc)" }}
+                        >
+                          <span className="text-xs text-gray-600 group-hover:text-yellow-500/70 tabular-nums">
+                            {post.date}
+                          </span>
+                          <span>{post.title}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
 

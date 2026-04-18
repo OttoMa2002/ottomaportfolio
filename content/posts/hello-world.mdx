@@ -1,0 +1,25 @@
+---
+slug: hello-world
+title: 你好，世界
+date: 2026-04-18
+excerpt: 博客的第一篇文章，试试 MDX 工作流。
+tags: [随笔]
+---
+
+这是我的第一篇博客文章。
+
+## 怎么写新文章
+
+在 `content/posts/` 里新建一个 `.mdx` 文件，顶部填好 frontmatter，`git push` 后就会自动出现在 `/blog`。
+
+## frontmatter 字段说明
+
+- `slug`：URL 片段（`/blog/xxx` 里的 xxx），建议英文小写 + 连字符
+- `title`：文章标题
+- `date`：发布日期，`YYYY-MM-DD`
+- `excerpt`：摘要，列表页和首页 Recent Posts 会显示
+- `tags`：标签数组，以后做分类用
+
+## 正文支持
+
+标准 Markdown 全部支持，也可以嵌入 React 组件（MDX 的特色）。
