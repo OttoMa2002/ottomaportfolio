@@ -1,6 +1,7 @@
 import Navbar from "./components/Navbar"
 import Footer from "./components/Footer"
 import HeroSection from "./components/HeroSection"
+import BlogSection from "./components/BlogSection"
 
 export default function Home() {
   return (
@@ -32,9 +33,11 @@ export default function Home() {
 
       <HeroSection />
 
+      <BlogSection />
+
       {/* Placeholder sections for scroll testing */}
       <div className="px-8 md:px-16 lg:px-24 pb-28" style={{ fontFamily: "var(--font-quicksand)" }}>
-        {[2, 3, 4].map((i) => (
+        {[3, 4].map((i) => (
           <div key={i} className="mb-20 max-w-5xl mx-auto">
             <h2 className="text-xl font-semibold text-gray-500 mb-3">Section {i}</h2>
             <div className="h-px w-full mb-6" style={{ background: "rgba(255,255,255,0.06)" }} />
