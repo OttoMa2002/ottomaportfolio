@@ -14,6 +14,8 @@ const FLOATING_TEXTS = [
   { text: "JavaScript",         x: "20%", y: "82%", size: "1rem",    rotate: 2 },
   { text: "前端开发",            x: "78%", y: "34%", size: "1.15rem", rotate: -6 },
   { text: "游戏开发",            x: "15%", y: "44%", size: "0.9rem",  rotate: 4 },
+  { text: "Software Development", x: "40%", y: "8%",  size: "1.1rem",  rotate: -2 },
+  { text: "软件开发",            x: "42%", y: "90%", size: "1rem",    rotate: 3 },
 ]
 
 /* ═══════════════════════════════════════════════════════════
@@ -258,10 +260,10 @@ export default function HeroSection() {
               {/* Level 2: Specialization */}
               <div className="flex flex-col gap-1">
                 <p className="text-base md:text-lg text-gray-300 leading-relaxed">
-                  前端/全栈 Web 开发、Unity 游戏开发与 iOS 移动端应用开发
+                  前端/全栈 Web 开发、Unity 游戏开发、iOS 移动端应用开发与软件开发
                 </p>
                 <p className="text-sm text-gray-500 leading-relaxed">
-                  Front-End / Full-Stack Web · Unity Game Development · iOS Mobile App Development
+                  Front-End / Full-Stack Web · Unity Game Development · iOS Mobile App Development · Software Development
                 </p>
               </div>
 
@@ -361,6 +363,7 @@ export default function HeroSection() {
         {/* ═══ Floating Avatar (desktop only — morphs from showcase → normal position) ═══ */}
         <div
           ref={floatingAvatarRef}
+          className="hero-avatar"
           style={{
             position: "absolute",
             zIndex: 20,
@@ -372,8 +375,25 @@ export default function HeroSection() {
           <img
             src="/yellow.jpg"
             alt="Otto Ma"
-            className="w-full h-full object-cover"
-            style={{ transform: "scale(1.7)" }}
+            style={{
+              position: "absolute",
+              top: 0, left: 0,
+              width: "100%", height: "100%",
+              objectFit: "cover",
+              transform: "scale(1.7)",
+            }}
+          />
+          <img
+            src="/blackav.jpg"
+            alt="Otto Ma"
+            className="hero-avatar-img-hover"
+            style={{
+              position: "absolute",
+              top: 0, left: 0,
+              width: "100%", height: "100%",
+              objectFit: "cover",
+              transform: "scale(1.05)",
+            }}
           />
         </div>
 

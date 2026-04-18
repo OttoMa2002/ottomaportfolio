@@ -125,3 +125,79 @@ html, body {
   0%   { translate: 0 0; }
   100% { translate: 0 8px; }
 }
+
+/* ─── Hero normal-layer avatar (floating avatar after transition) ─── */
+.hero-avatar {
+  transition: transform 0.35s ease;
+}
+
+.hero-avatar:hover {
+  transform: scale(1.08);
+  outline: 2px solid rgba(255, 215, 0, 0.7);
+  outline-offset: -2px;
+  animation: hero-avatar-breathing 2.4s ease-in-out infinite;
+}
+
+@keyframes hero-avatar-breathing {
+  0%, 100% {
+    box-shadow: 0 0 50px rgba(255, 215, 0, 0.18), 0 0 110px rgba(255, 215, 0, 0.08);
+  }
+  50% {
+    box-shadow: 0 0 90px rgba(255, 215, 0, 0.38), 0 0 180px rgba(255, 215, 0, 0.18);
+  }
+}
+
+/* Hover image swap (egg) */
+.hero-avatar-img-hover {
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.hero-avatar:hover .hero-avatar-img-hover {
+  opacity: 1;
+}
+
+/* ─── Blog section: ENTER cursive link ─── */
+.blog-enter {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.blog-enter-text {
+  display: inline-block;
+  font-size: clamp(3.5rem, 8vw, 6.5rem);
+  line-height: 1;
+  color: rgba(255, 215, 0, 0.82);
+  text-shadow:
+    0 0 18px rgba(255, 215, 0, 0.28),
+    0 0 45px rgba(255, 190, 0, 0.14);
+  transition: transform 0.5s ease, text-shadow 0.5s ease, color 0.5s ease, letter-spacing 0.5s ease;
+  will-change: transform, text-shadow;
+  padding: 0 0.3em;
+}
+
+.blog-enter:hover .blog-enter-text {
+  transform: scale(1.08) rotate(-2deg);
+  color: rgba(255, 230, 80, 0.95);
+  letter-spacing: 0.04em;
+  text-shadow:
+    0 0 28px rgba(255, 220, 60, 0.55),
+    0 0 65px rgba(255, 190, 0, 0.3),
+    0 0 110px rgba(255, 170, 0, 0.18);
+  animation: blog-enter-breathing 2.8s ease-in-out infinite;
+}
+
+@keyframes blog-enter-breathing {
+  0%, 100% {
+    text-shadow:
+      0 0 28px rgba(255, 220, 60, 0.55),
+      0 0 65px rgba(255, 190, 0, 0.3),
+      0 0 110px rgba(255, 170, 0, 0.18);
+  }
+  50% {
+    text-shadow:
+      0 0 38px rgba(255, 230, 80, 0.75),
+      0 0 85px rgba(255, 200, 0, 0.45),
+      0 0 150px rgba(255, 180, 0, 0.28);
+  }
+}
