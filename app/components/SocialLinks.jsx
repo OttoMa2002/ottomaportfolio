@@ -3,12 +3,14 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { createPortal } from "react-dom"
 
+/* 联系方式：邮件 / 微信 / 电话 */
 const CONTACT_INFO = {
   email:   "chaoyuehaoma@gmail.com",
   wechat:  "chaoyuehaoma",
-  phone:   "+86 18652860008 +1 7657122198", 
+  phone:   "+86 18652860008 +1 7657122198",
 }
 
+/* 社交图标配置：link 类型直接外链，modal 类型点击弹窗显示联系方式 */
 const SOCIAL_ITEMS = [
   {
     id: "instagram",
@@ -85,8 +87,10 @@ const SOCIAL_ITEMS = [
   },
 ]
 
+/* Modal 关闭动画时长（ms），淡出用 */
 const EXIT_DURATION = 160
 
+/* 联系方式弹窗：入场 focus-in 淡入 + 缩放模糊，出场快速淡出，支持 Esc / 点遮罩关闭 */
 function ContactModal({ item, onClose }) {
   const overlayRef = useRef(null)
   const [entered, setEntered] = useState(false)
@@ -149,6 +153,7 @@ function ContactModal({ item, onClose }) {
   )
 }
 
+/* 社交图标组：link 渲染 <a> 外链，modal 渲染 <button> 触发联系方式弹窗 */
 export default function SocialLinks({ iconSize = 20, gap = "gap-5" }) {
   const [activeModal, setActiveModal] = useState(null)
   const activeItem = SOCIAL_ITEMS.find((i) => i.id === activeModal)

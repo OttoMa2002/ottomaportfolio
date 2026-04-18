@@ -2,9 +2,7 @@
 
 import { useEffect, useRef, useCallback } from "react"
 
-/* ═══════════════════════════════════════════════════════════
-   CONFIGURABLE: Floating texts around the showcase avatar
-   ═══════════════════════════════════════════════════════════ */
+/* 展示层漂浮英文：位置 / 字号 / 旋转角度 */
 const FLOATING_TEXTS = [
   { text: "Creative Developer",  x: "8%",  y: "22%", size: "1.2rem",  rotate: -8 },
   { text: "AI Developer",    x: "65%", y: "14%", size: "1rem",    rotate: 5 },
@@ -18,43 +16,38 @@ const FLOATING_TEXTS = [
   { text: "软件开发",            x: "42%", y: "90%", size: "1rem",    rotate: 3 },
 ]
 
-/* ═══════════════════════════════════════════════════════════
-   CONFIGURABLE: Animation parameters
-   ═══════════════════════════════════════════════════════════ */
-const SCROLL_DISTANCE = 600       // px of scroll for full transition
-const SHOWCASE_AVATAR_MAX = 380   // px, showcase avatar on desktop
-const SHOWCASE_AVATAR_MOBILE = 300 // px, showcase avatar on small screens
-const MOBILE_BREAKPOINT = 640     // px
-// Showcase fades out over 0 → FADE_OUT_END of progress
-// Normal fades in over FADE_IN_START → 1 of progress
+/* 滚动过渡参数：总距离 + 头像尺寸 + 断点 + 淡入淡出区间 */
+const SCROLL_DISTANCE = 600
+const SHOWCASE_AVATAR_MAX = 380
+const SHOWCASE_AVATAR_MOBILE = 300
+const MOBILE_BREAKPOINT = 640
 const FADE_OUT_END = 0.5
 const FADE_IN_START = 0.4
-const NORMAL_SLIDE_UP = 200  // px of upward travel during fade-in
+const NORMAL_SLIDE_UP = 200
 
-/* ─── Helpers ─── */
+/* 数学工具：钳制 0-1 / 线性插值 */
 function clamp01(v) { return Math.max(0, Math.min(1, v)) }
 function lerp(a, b, t) { return a + (b - a) * t }
 
 export default function HeroSection() {
+  /* DOM 引用 + 动画状态 ref（直接改 DOM，不触发 React 重渲染） */
   const sectionRef = useRef(null)
   const stickyRef = useRef(null)
   const normalAvatarRef = useRef(null)
   const showcaseLayerRef = useRef(null)
   const normalLayerRef = useRef(null)
   const floatingAvatarRef = useRef(null)
-
-  // Mutable refs for animation state (no re-renders)
   const progressRef = useRef(0)
   const avatarPosRef = useRef(null)
   const rafRef = useRef(null)
   const isMobileRef = useRef(false)
-  const sectionTopRef = useRef(0) // cached offsetTop to avoid getBoundingClientRect in scroll
+  const sectionTopRef = useRef(0) // 缓存 offsetTop，避免滚动中反复 getBoundingClientRect
 
-  /* ─── Apply all animated styles directly to DOM ─── */
+  /* 按滚动进度直接改 DOM 样式：移动端只改透明度，桌面端做全套动画 */
   const applyStyles = useCallback(() => {
     const p = progressRef.current
 
-    // ── Mobile: only update two opacity values, nothing else ──
+    // 移动端：只淡入淡出
     if (isMobileRef.current) {
       const showcaseOpacity = clamp01(1 - p / FADE_OUT_END)
       const normalOpacity = clamp01((p - FADE_IN_START) / (1 - FADE_IN_START))
@@ -63,17 +56,15 @@ export default function HeroSection() {
       return
     }
 
-    // ── Desktop: full animation ──
+    // 桌面端：展示层淡出 / 正常层上滑淡入 / 浮动头像位移缩放
     const pos = avatarPosRef.current
 
-    // Showcase layer
     const showcaseOpacity = clamp01(1 - p / FADE_OUT_END)
     if (showcaseLayerRef.current) {
       showcaseLayerRef.current.style.opacity = showcaseOpacity
       showcaseLayerRef.current.style.pointerEvents = showcaseOpacity < 0.1 ? "none" : "auto"
     }
 
-    // Normal layer
     const normalOpacity = clamp01((p - FADE_IN_START) / (1 - FADE_IN_START))
     const normalTranslateY = (1 - normalOpacity) * NORMAL_SLIDE_UP
     if (normalLayerRef.current) {
@@ -82,7 +73,6 @@ export default function HeroSection() {
       normalLayerRef.current.style.pointerEvents = normalOpacity < 0.1 ? "none" : "auto"
     }
 
-    // Floating avatar
     if (floatingAvatarRef.current && pos) {
       const size = lerp(pos.sSize, pos.tSize, p)
       const cx = lerp(pos.sx, pos.tx, p)
@@ -97,13 +87,13 @@ export default function HeroSection() {
       el.style.boxShadow = `0 0 ${lerp(80, 40, glowFade)}px rgba(255, 215, 0, ${lerp(0.12, 0.08, glowFade)}), 0 0 ${lerp(160, 80, glowFade)}px rgba(255, 215, 0, ${lerp(0.06, 0, glowFade)})`
     }
 
-    // Normal layer avatar visibility — hidden on desktop (floating avatar covers it)
+    // 桌面端隐藏正常层头像占位（由浮动头像覆盖）
     if (normalAvatarRef.current) {
       normalAvatarRef.current.style.visibility = "hidden"
     }
   }, [])
 
-  /* ─── Scroll tracking via rAF (no setState, no getBoundingClientRect) ─── */
+  /* 滚动监听：rAF 节流，计算 progress 后 apply */
   useEffect(() => {
     const cacheTop = () => {
       if (sectionRef.current) {
@@ -130,14 +120,14 @@ export default function HeroSection() {
     }
   }, [applyStyles])
 
-  /* ─── Measure avatar source & target positions ─── */
+  /* 测量头像起点（展示层中心）与终点（正常层占位）位置，移动端跳过 */
   useEffect(() => {
     const measure = () => {
       if (!normalAvatarRef.current || !stickyRef.current || !normalLayerRef.current) return
 
       isMobileRef.current = window.innerWidth < MOBILE_BREAKPOINT
 
-      // Mobile: no position measurement, no floating avatar, no translateY
+      // 移动端：不测量 / 不显示浮动头像 / 不做位移
       if (isMobileRef.current) {
         if (floatingAvatarRef.current) floatingAvatarRef.current.style.display = "none"
         if (normalAvatarRef.current) normalAvatarRef.current.style.visibility = "visible"
@@ -147,7 +137,7 @@ export default function HeroSection() {
         return
       }
 
-      // Temporarily reset transform so getBoundingClientRect gives the natural position
+      // 暂时清 transform，否则 getBoundingClientRect 拿到的是位移后的位置
       const savedTransform = normalLayerRef.current.style.transform
       normalLayerRef.current.style.transform = "translateY(0px)"
 
@@ -164,10 +154,7 @@ export default function HeroSection() {
         tSize: ab.width,
       }
 
-      // Restore transform
       normalLayerRef.current.style.transform = savedTransform
-
-      // Apply immediately after measure
       applyStyles()
     }
     const timer = setTimeout(measure, 50)
@@ -193,7 +180,7 @@ export default function HeroSection() {
         }}
       >
 
-        {/* ═══ Normal Layout Layer (grid child, centered by grid) ═══ */}
+        {/* 正常层：左头像占位 + Quote，右姓名 / 方向 / 学历三级信息 */}
         <div
           ref={normalLayerRef}
           className="px-10 md:px-20 lg:px-32"
@@ -206,7 +193,7 @@ export default function HeroSection() {
         >
           <div className="w-full flex flex-col md:flex-row gap-6 md:gap-16 items-center">
 
-            {/* Left: Avatar placeholder + Quote */}
+            {/* 左：头像占位 + 拉丁语 Quote */}
             <div className="flex flex-col items-center gap-3 md:gap-5 md:w-1/3 flex-shrink-0">
               <div
                 ref={normalAvatarRef}
@@ -229,16 +216,15 @@ export default function HeroSection() {
               </p>
             </div>
 
-            {/* Divider */}
+            {/* 左右竖向分隔线 */}
             <div
               className="hidden md:block w-px self-stretch"
               style={{ background: "rgba(255, 255, 255, 0.07)" }}
             />
 
-            {/* Right: Info */}
+            {/* 右：姓名 / 方向 / 学历 三级信息 */}
             <div className="flex flex-col gap-4 md:gap-8 md:w-2/3">
 
-              {/* Level 1: Names */}
               <div className="flex flex-col gap-1">
                 <h1
                   className="text-4xl md:text-6xl font-bold text-white leading-tight"
@@ -257,7 +243,6 @@ export default function HeroSection() {
                 </h2>
               </div>
 
-              {/* Level 2: Specialization */}
               <div className="flex flex-col gap-1">
                 <p className="text-base md:text-lg text-gray-300 leading-relaxed">
                   前端/全栈 Web 开发、Unity 游戏开发、iOS 移动端应用开发与软件开发
@@ -267,7 +252,6 @@ export default function HeroSection() {
                 </p>
               </div>
 
-              {/* Level 3: Education */}
               <div className="flex flex-col gap-4">
                 <div className="flex items-start gap-3">
                   <span
@@ -309,7 +293,7 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* ═══ Showcase Layer (floating texts + centered logo on mobile) ═══ */}
+        {/* 展示层：漂浮文字 + 移动端居中头像 */}
         <div
           ref={showcaseLayerRef}
           className="overflow-hidden"
@@ -324,7 +308,6 @@ export default function HeroSection() {
             pointerEvents: "auto",
           }}
         >
-          {/* Mobile-only showcase avatar (static, no position animation) */}
           <div
             className="block md:hidden rounded-full overflow-hidden"
             style={{
@@ -342,7 +325,6 @@ export default function HeroSection() {
             />
           </div>
 
-          {/* Floating texts */}
           {FLOATING_TEXTS.map((item, i) => (
             <span
               key={i}
@@ -360,7 +342,7 @@ export default function HeroSection() {
           ))}
         </div>
 
-        {/* ═══ Floating Avatar (desktop only — morphs from showcase → normal position) ═══ */}
+        {/* 浮动头像（桌面限定）：从展示中心渐变到正常层位置，hover 切换真人照 */}
         <div
           ref={floatingAvatarRef}
           className="hero-avatar"

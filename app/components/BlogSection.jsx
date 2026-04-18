@@ -1,6 +1,9 @@
 import Link from "next/link"
+import { getAllPosts } from "../../lib/posts"
 
 export default function BlogSection() {
+  const recentPosts = getAllPosts().slice(0, 3)
+
   return (
     <section
       className="px-8 md:px-16 lg:px-24 pt-6 md:pt-8 pb-10 md:pb-14 mt-[-16vh] md:mt-[-20vh] relative z-8"
@@ -8,7 +11,7 @@ export default function BlogSection() {
     >
       <div className="max-w-6xl mx-auto">
 
-        {/* ═══ Section Title — 同尺寸，颜色区分，并列 ═══ */}
+        {/* 标题区：中英并列，同尺寸不同色 */}
         <div className="mb-6 md:mb-10 flex flex-row items-baseline gap-3 md:gap-5 flex-wrap">
           <h2
             className="text-2xl md:text-4xl font-semibold text-gray-300 leading-none"
@@ -27,10 +30,10 @@ export default function BlogSection() {
           </p>
         </div>
 
-        {/* ═══ Main content: left 30% / right 70% ═══ */}
+        {/* section主体：左占30 右占70 */}
         <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-stretch md:min-h-[17rem]">
 
-          {/* Left 30%: cursive Enter — clickable link to /blog */}
+          {/* 左侧：花体 Enter，整块跳转 /blog */}
           <Link
             href="/blog"
             className="blog-enter group md:w-[30%] flex items-center justify-center py-6 md:py-0"
@@ -44,16 +47,16 @@ export default function BlogSection() {
             </span>
           </Link>
 
-          {/* Divider */}
+          {/* 左右竖向分隔线 */}
           <div
             className="hidden md:block w-px self-stretch"
             style={{ background: "rgba(255, 255, 255, 0.07)" }}
           />
 
-          {/* Right 70%: text block — upper 40% / lower 60%，内容居中 */}
+          {/* 右侧文字区：上下两块，比例 2:3 */}
           <div className="md:w-[70%] flex flex-col">
 
-            {/* Upper 40%: poetic intro */}
+            {/* 上半：诗意简介三行递进 */}
             <div className="flex flex-col justify-center md:flex-[2_2_0%]">
               <div className="w-fit mx-auto flex flex-col gap-2 md:gap-3">
                 <p
@@ -77,7 +80,7 @@ export default function BlogSection() {
               </div>
             </div>
 
-            {/* Divider line */}
+            {/* 上下横向分隔线 */}
             <div
               className="h-px w-full my-4 md:my-5"
               style={{
@@ -86,7 +89,7 @@ export default function BlogSection() {
               }}
             />
 
-            {/* Lower 60%: recent posts placeholder */}
+            {/* 下半：最近文章 */}
             <div className="flex flex-col justify-center md:flex-[3_3_0%]">
               <div className="w-fit mx-auto flex flex-col gap-3 text-center">
                 <p
@@ -95,9 +98,28 @@ export default function BlogSection() {
                 >
                   Recent Posts · 最近文章
                 </p>
-                <p className="text-sm text-gray-600 italic">
-                  文章正在路上，敬请期待…
-                </p>
+                {recentPosts.length === 0 ? (
+                  <p className="text-sm text-gray-600 italic">
+                    文章正在路上，敬请期待…
+                  </p>
+                ) : (
+                  <ul className="flex flex-col gap-2">
+                    {recentPosts.map((post) => (
+                      <li key={post.slug}>
+                        <Link
+                          href={`/blog/${post.slug}`}
+                          className="group inline-flex items-baseline gap-3 text-sm md:text-base text-gray-400 hover:text-yellow-400 transition-colors"
+                          style={{ fontFamily: "var(--font-noto-sc)" }}
+                        >
+                          <span className="text-xs text-gray-600 group-hover:text-yellow-500/70 tabular-nums">
+                            {post.date}
+                          </span>
+                          <span>{post.title}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
 
