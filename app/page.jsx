@@ -13,7 +13,7 @@ export default function Home() {
         overflowX: "clip",
       }}
     >
-      {/* Background glow effects */}
+      {/* 背景辉光：右上 + 左下两团模糊暖光 */}
       <div
         className="fixed top-[-200px] right-[-200px] w-[600px] h-[600px] rounded-full pointer-events-none"
         style={{
@@ -35,7 +35,7 @@ export default function Home() {
 
       <BlogSection />
 
-      {/* Placeholder sections for scroll testing */}
+      {/* 暂时占位内容*/}
       <div className="px-8 md:px-16 lg:px-24 pb-28" style={{ fontFamily: "var(--font-quicksand)" }}>
         {[3, 4].map((i) => (
           <div key={i} className="mb-20 max-w-5xl mx-auto">

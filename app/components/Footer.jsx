@@ -10,12 +10,10 @@ export default function Footer() {
         fontFamily: "var(--font-quicksand)",
       }}
     >
-      {/* Left - Copyright */}
+      {/* 左：版权 · 右：社交图标 */}
       <div className="text-sm text-gray-300">
         &copy; 2026 Otto Ma. All rights reserved.
       </div>
-
-      {/* Right - Social icons */}
       <SocialLinks />
     </footer>
   )

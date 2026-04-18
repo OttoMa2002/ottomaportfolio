@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 
 export default function Navbar() {
+  /* 状态 + 滚动监听：下拉菜单开关，滚动超过 20px 时 navbar 缩小 */
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
@@ -29,7 +30,7 @@ export default function Navbar() {
         boxShadow: "0 4px 20px rgba(255, 215, 0, 0.3)",
       }}
     >
-      {/* Left - Otto's with glow + flame effect */}
+      {/* 左：火焰 SVG 滤镜 + OTTO'S 标题（滚动后缩小并隐藏火焰） */}
       <svg className="absolute w-0 h-0" aria-hidden="true">
         <filter id="flame-filter">
           <feTurbulence
@@ -62,7 +63,7 @@ export default function Navbar() {
         OTTO&apos;S
       </div>
 
-      {/* Desktop center - Welcome marquee (hidden on mobile, shown inline on md+) */}
+      {/* 中：多语言欢迎语走马灯（桌面端，滚动后隐藏） */}
       <div
         className={`hidden md:block flex-1 mx-12 overflow-hidden max-w-md transition-all duration-400 ${scrolled ? "opacity-0 max-h-0" : "opacity-100 max-h-20"}`}
         style={{
@@ -95,7 +96,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Right - Navigation dropdown */}
+      {/* 右：Navigation 下拉菜单（About / Projects / Blog / Contact） */}
       <div
         className="relative"
         style={{ fontFamily: "var(--font-quicksand)" }}
@@ -138,7 +139,7 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* Mobile marquee - second row (hidden on md+) */}
+      {/* 移动端走马灯：换行到第二行显示，md 及以上隐藏 */}
       <div
         className={`w-full md:hidden overflow-hidden transition-all duration-400 ${scrolled ? "opacity-0 max-h-0 mt-0" : "opacity-100 max-h-12 mt-3"}`}
         style={{
