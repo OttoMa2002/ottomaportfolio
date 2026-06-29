@@ -6,7 +6,8 @@ export default function BlogSection() {
 
   return (
     <section
-      className="px-8 md:px-16 lg:px-24 pt-6 md:pt-8 pb-10 md:pb-14 mt-[-16vh] md:mt-[-20vh] relative z-8"
+      id="blog"
+      className="px-8 md:px-16 lg:px-24 pt-6 md:pt-8 pb-10 md:pb-14 mt-[-16vh] md:mt-[-20vh] relative z-8 scroll-mt-24"
       style={{ fontFamily: "var(--font-quicksand)" }}
     >
       <div className="max-w-6xl mx-auto">
@@ -56,26 +57,22 @@ export default function BlogSection() {
           {/* 右侧文字区：上下两块，比例 2:3 */}
           <div className="md:w-[70%] flex flex-col">
 
-            {/* 上半：诗意简介三行递进 */}
+            {/* 上半：英文双行，昼/夜对照 */}
             <div className="flex flex-col justify-center md:flex-[2_2_0%]">
-              <div className="w-fit mx-auto flex flex-col gap-2 md:gap-3">
-                <p
-                  className="text-xl md:text-2xl text-gray-300 leading-relaxed"
-                  style={{ fontFamily: "var(--font-noto-sc)", letterSpacing: "0.05em" }}
-                >
-                  一些思考
+              <div
+                className="w-fit mx-auto flex flex-col gap-2 md:gap-3"
+                style={{ fontFamily: "var(--font-jetbrains)" }}
+              >
+                <p className="text-2xl md:text-3xl text-gray-200 lowercase tracking-wide leading-snug">
+                  dev by{" "}
+                  <span style={{ color: "rgba(255, 210, 0, 0.82)" }}>day</span>.
                 </p>
                 <p
-                  className="text-xl md:text-2xl text-gray-400 leading-relaxed"
-                  style={{ fontFamily: "var(--font-noto-sc)", letterSpacing: "0.05em", paddingLeft: "1.5rem" }}
+                  className="text-2xl md:text-3xl text-gray-500 italic lowercase tracking-wide leading-snug"
+                  style={{ paddingLeft: "2.5rem" }}
                 >
-                  一些碎碎念
-                </p>
-                <p
-                  className="text-xl md:text-2xl text-gray-500 leading-relaxed italic"
-                  style={{ fontFamily: "var(--font-noto-sc)", letterSpacing: "0.05em", paddingLeft: "3rem" }}
-                >
-                  需要和不需要记录的
+                  something softer by{" "}
+                  <span className="text-gray-300">night</span>.
                 </p>
               </div>
             </div>

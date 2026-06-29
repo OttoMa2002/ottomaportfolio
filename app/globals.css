@@ -208,3 +208,10 @@ html, body {
       0 0 150px rgba(255, 180, 0, 0.28);
   }
 }
+
+/* 查看简历：hover 时图标+文字轻微上浮，带一点点光晕 */
+.hero-resume-btn:hover {
+  color: rgba(255, 225, 80, 1);
+  transform: translateY(-3px);
+  text-shadow: 0 0 12px rgba(255, 215, 0, 0.35);
+}

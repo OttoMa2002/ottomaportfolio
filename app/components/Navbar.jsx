@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Link from "next/link"
 
 export default function Navbar() {
   /* 状态 + 滚动监听：下拉菜单开关，滚动超过 20px 时 navbar 缩小 */
@@ -124,13 +123,17 @@ export default function Navbar() {
             <button className="block w-full text-left px-4 py-2 text-gray-300 hover:text-gray-200 hover:bg-white/5 transition-colors cursor-pointer">
               Projects
             </button>
-            <Link
-              href="/blog"
+            <button
               className="block w-full text-left px-4 py-2 text-gray-300 hover:text-gray-200 hover:bg-white/5 transition-colors cursor-pointer"
-              onClick={() => setMenuOpen(false)}
+              onClick={() => {
+                setMenuOpen(false)
+                document
+                  .getElementById("blog")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" })
+              }}
             >
               Blog
-            </Link>
+            </button>
             <button className="block w-full text-left px-4 py-2 text-gray-300 hover:text-gray-200 hover:bg-white/5 transition-colors cursor-pointer">
               Contact
             </button>
