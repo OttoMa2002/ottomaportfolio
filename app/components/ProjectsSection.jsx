@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { projects } from "../../lib/projects"
 import ResumeLink from "./ResumeLink"
 
@@ -143,11 +144,13 @@ export default function ProjectsSection() {
               {/* 截图：全部叠放，按活跃索引交叉淡入 */}
               <div className="relative w-full" style={{ aspectRatio: "2392 / 1400" }}>
                 {projects.map((p, i) => (
-                  <img
+                  <Image
                     key={p.no}
                     src={p.thumb}
                     alt={p.title}
-                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-[350ms]"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 700px"
+                    className="object-cover transition-opacity duration-[350ms]"
                     style={{ opacity: active === i ? 1 : 0 }}
                   />
                 ))}
@@ -196,10 +199,10 @@ export default function ProjectsSection() {
               style={{ border: "1px solid rgba(255,255,255,0.08)" }}
             >
               <div
-                className="w-28 flex-shrink-0 rounded-lg overflow-hidden"
+                className="relative w-28 flex-shrink-0 rounded-lg overflow-hidden"
                 style={{ aspectRatio: "2392 / 1400" }}
               >
-                <img src={p.thumb} alt={p.title} className="w-full h-full object-cover" />
+                <Image src={p.thumb} alt={p.title} fill sizes="112px" className="object-cover" />
               </div>
               <div className="flex flex-col gap-1.5 min-w-0">
                 <div className="flex items-center gap-2">
