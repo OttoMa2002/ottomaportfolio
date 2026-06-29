@@ -283,7 +283,7 @@ export default function HeroSection() {
                       <span className="ml-2 font-normal text-gray-400">Bachelor&apos;s in Computer Science</span>
                     </p>
                     <p className="text-xs text-gray-600">
-                      2022–2025 &nbsp;·&nbsp; 华盛顿大学圣路易斯分校 &nbsp;·&nbsp; Washington University in St. Louis
+                      2021–2025 &nbsp;·&nbsp; 华盛顿大学圣路易斯分校 &nbsp;·&nbsp; Washington University in St. Louis
                     </p>
                   </div>
                 </div>
