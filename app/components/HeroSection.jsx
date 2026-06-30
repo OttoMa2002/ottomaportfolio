@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback } from "react"
 import ResumeLink from "./ResumeLink"
+import AnimatedName from "./AnimatedName"
 
 /* 展示层漂浮英文：位置 / 字号 / 旋转角度 */
 const FLOATING_TEXTS = [
@@ -226,23 +227,8 @@ export default function HeroSection() {
             {/* 右：姓名 / 方向 / 学历 三级信息 */}
             <div className="flex flex-col gap-4 md:gap-8 md:w-2/3">
 
-              <div className="flex flex-col gap-1">
-                <h1
-                  className="text-4xl md:text-6xl font-bold text-white leading-tight"
-                  style={{ fontFamily: "var(--font-noto-sc)", letterSpacing: "0.05em" }}
-                >
-                  马超越昊
-                </h1>
-                <h2
-                  className="text-2xl md:text-4xl font-bold leading-tight"
-                  style={{
-                    fontFamily: "var(--font-quicksand)",
-                    color: "rgba(255, 210, 0, 0.82)",
-                  }}
-                >
-                  Otto Ma
-                </h2>
-              </div>
+              {/* 姓名：hover 线条自绘动画（中英文一体 SVG） */}
+              <AnimatedName className="w-[230px] md:w-[320px]" />
 
               <div className="flex flex-col gap-1">
                 <p className="text-base md:text-lg text-gray-300 leading-relaxed">

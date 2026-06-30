@@ -215,3 +215,26 @@ html, body {
   transform: translateY(-3px);
   text-shadow: 0 0 12px rgba(255, 215, 0, 0.35);
 }
+
+/* Hero 名字自绘：静止实心字（描边按归一化长度藏起） */
+.animated-name { cursor: pointer; }
+.name-glyph {
+  stroke-width: 1.2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  fill-opacity: 1;
+}
+/* hover：所有字一起"溶解→描绘→填实"播一次 */
+.animated-name:hover .name-glyph {
+  animation: name-redraw 2.2s ease forwards;
+}
+@keyframes name-redraw {
+  0%   { fill-opacity: 1; stroke-dashoffset: 1; }   /* 实心 */
+  18%  { fill-opacity: 0; stroke-dashoffset: 0.88; } /* 填充溶解、起笔 */
+  62%  { fill-opacity: 0; stroke-dashoffset: 0; }    /* 线条画完 */
+  100% { fill-opacity: 1; stroke-dashoffset: 0; }    /* 填实回正 */
+}
+/* 减少动态偏好：不做自绘，始终实心 */
+@media (prefers-reduced-motion: reduce) {
+  .animated-name:hover .name-glyph { animation: none; }
+}
